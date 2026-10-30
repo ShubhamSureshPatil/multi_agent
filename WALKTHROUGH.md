@@ -99,20 +99,26 @@ or use the built-in review: `/code-review` from inside that worktree.
 
 **Merge:**
 ```bash
-git merge <mosaic-branch>        # touches transforms.py only → clean
-git merge <nms-branch>           # touches eval.py
-git merge <per-class-eval-branch># ALSO touches eval.py → likely conflict
+git merge worktree-mosaic-augmentation   # transforms.py only → clean
+git merge worktree-nms                   # touches eval.py
+git merge worktree-per-class-eval        # ALSO touches eval.py → git auto-merges (different hunks)
 ```
-The conflict is **on purpose**. Two features that edit the same CLI is a real, everyday situation. Fix it in Claude:
+Talking point: NMS and per-class-eval both edited `eval.py`, but in different places, so git merged them.
+**Merging cleanly doesn't prove they work together.** Run the tests on the combined result. If you do get a
+real conflict, hand it to Claude:
 ```
 Resolve the merge conflict in detector/eval.py so both NMS and the per-class report work. Run tests and eval.
 ```
 
-**Final result:**
+**Final result** (checked in a dry run: 18 tests pass):
 ```bash
 python3 -m pytest -q
-python3 -m detector.eval         # mAP ≈ 0.99 (from 0.8475), plus per-class table + confusion matrix
+python3 -m detector.eval             # mAP 0.8475 → 0.9922, per-class AP ≈ 0.99 for all 3 classes
+python3 -m detector.eval --no-nms    # back to 0.8475: shows the gain came from NMS
 ```
+**Finale:** the new confusion matrix shows **~250 background false positives** at score ≥ 0.5.
+The per-class-eval agent's report has found the *next* ticket ("add a score threshold / suppress
+low-confidence boxes"). Launch a 4th agent for it on stage to close the loop.
 
 ---
 
