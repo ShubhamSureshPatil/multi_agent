@@ -11,7 +11,7 @@ tickets=("$@")
 for t in "${tickets[@]}"; do
   name="${t#*-}"   # 01-mosaic-augmentation -> mosaic-augmentation
   echo "▶ launching agent '$name' for tickets/$t.md"
-  claude --bg -w "$name" -n "$name" --permission-mode acceptEdits \
+  claude --bg -w "$name" -n "$name" --permission-mode auto \
     "Implement tickets/$t.md. Read CLAUDE.md first and use the project skills where they apply. \
 When tests pass, commit your work on this branch with a clear message, then summarise what you changed \
 and the mAP before -> after."

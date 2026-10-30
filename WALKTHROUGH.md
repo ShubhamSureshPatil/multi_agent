@@ -51,7 +51,7 @@ Walk through the `.claude/` folder. **This is the main idea of the talk**:
 ```
 That runs one of these for each ticket (show the script):
 ```bash
-claude --bg -w nms -n nms --permission-mode acceptEdits "Implement tickets/03-nms.md ..."
+claude --bg -w nms -n nms --permission-mode auto "Implement tickets/03-nms.md ..."
 ```
 - `-w nms`: creates a **git worktree** (its own folder and branch). Agents can't overwrite each other's files.
 - `--bg`: runs in the background and returns your prompt immediately.
