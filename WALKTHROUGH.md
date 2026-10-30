@@ -129,7 +129,7 @@ moment. It writes a scoreboard to `results/`. Recorded run (`results/race-202610
 
 | | wall time | peak context | output tokens | result |
 |---|---|---|---|---|
-| Team of 3 (slowest agent) | **1.0 min** | 55–59k per agent | 25.6k total | 3 branches, 27 tests total, mAP 0.9922 when merged (17 tests on the merged code) |
+| Team of 3 (slowest agent) | **1.0 min** | 55–59k per agent | 25.6k total | 3 branches; merged: 17 tests, mAP 0.9922 |
 | Solo, sequential | **1.7 min** | 65k | 20.3k | 1 branch, 17 tests, mAP 0.9922 |
 
 How to present it honestly:
