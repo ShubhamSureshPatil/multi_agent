@@ -122,6 +122,27 @@ low-confidence boxes"). Launch a 4th agent for it on stage to close the loop.
 
 ---
 
+## 4b. Parallel vs single agent (≈2 min)
+
+`./scripts/race.sh` starts the 3-agent team **and** one solo agent doing all 3 tickets in order, at the same
+moment. It writes a scoreboard to `results/`. Recorded run (`results/race-20261030-092334.md`):
+
+| | wall time | peak context | output tokens | result |
+|---|---|---|---|---|
+| Team of 3 (slowest agent) | **1.0 min** | 55–59k per agent | 25.6k total | 3 branches, 27 tests total, mAP 0.9922 when merged (17 tests on the merged code) |
+| Solo, sequential | **1.7 min** | 65k | 20.3k | 1 branch, 17 tests, mAP 0.9922 |
+
+How to present it honestly:
+- **Speed:** total time is the *slowest* ticket, not the *sum*. These tickets take under a minute each, so it's
+  1.7×. With real 20–40 minute tickets the gap grows to roughly N× for N independent tickets.
+- **Context:** about 50k of each agent's context is fixed overhead (system prompt, CLAUDE.md, tools). The work itself
+  takes about 5–9k tokens per team agent and about 15k for the solo agent, which carries every feature's code
+  and logs into the later tickets. On real features that pile-up is what makes a long single session drift.
+- **Cost:** parallel uses somewhat *more* tokens in total (each agent reads the repo again). You pay a bit
+  more for wall-clock time.
+- **Workflow:** 3 branches means you can review, merge or revert one feature without touching the others.
+  The solo branch is all-or-nothing.
+
 ## 5. Takeaways (≈2 min)
 
 1. **CLAUDE.md is short.** Commands, layout, conventions.
