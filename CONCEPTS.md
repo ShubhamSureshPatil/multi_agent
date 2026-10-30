@@ -64,7 +64,7 @@ flowchart TB
 
 ```mermaid
 flowchart LR
-  T1[ticket 01<br/>mosaic] --> W1["claude --bg -w mosaic"]
+  T1[ticket 01<br/>mosaic] --> W1["claude --bg -w mosaic-augmentation"]
   T2[ticket 02<br/>per-class eval] --> W2["claude --bg -w per-class-eval"]
   T3[ticket 03<br/>NMS] --> W3["claude --bg -w nms"]
   W1 --> H{Stop hook<br/>tests green?}
@@ -182,6 +182,6 @@ flowchart TD
 1. Keep `CLAUDE.md` short. Every session pays for it.
 2. A skill is a procedure, not a feature.
 3. One feature → one agent → one worktree → one branch.
-4. Split tickets along module boundaries (`data/`, `eval/`, `postprocess/`) to avoid conflicts.
+4. Split tickets along module boundaries (`transforms.py`, `metrics.py`, `postprocess.py`) to avoid conflicts.
 5. Hooks enforce rules, prompts only suggest them.
 6. A clean merge isn't proof. Run tests and eval on the merged result.
