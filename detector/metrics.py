@@ -50,3 +50,49 @@ def average_precision(preds, gts, iou_thr: float = 0.5):
     mpre = np.maximum.accumulate(mpre[::-1])[::-1]
     idx = np.nonzero(mrec[1:] != mrec[:-1])[0]
     return float(((mrec[idx + 1] - mrec[idx]) * mpre[idx + 1]).sum())
+
+
+def per_class_ap(preds, gts, n_classes: int, iou_thr: float = 0.5):
+    """AP for each class, computed by filtering preds and GTs to that class.
+
+    Classes with no ground truth get nan (AP is undefined there).
+    """
+    aps = []
+    for c in range(n_classes):
+        cp = [(pb[pl == c], ps[pl == c], pl[pl == c]) for pb, ps, pl in preds]
+        cg = [(gb[gl == c], gl[gl == c]) for gb, gl in gts]
+        if sum(len(gl) for _, gl in cg) == 0:
+            aps.append(float("nan"))
+        else:
+            aps.append(average_precision(cp, cg, iou_thr))
+    return aps
+
+
+def confusion_matrix(preds, gts, n_classes: int, iou_thr: float = 0.5,
+                     score_thr: float = 0.5):
+    """(n_classes+1, n_classes+1) matrix; rows = GT class, cols = predicted class.
+
+    Index n_classes is "background": row bg counts false positives (predictions
+    matching no GT), column bg counts missed GTs. Predictions with
+    score >= score_thr are matched greedily in score order to the unmatched GT
+    with the highest IoU >= iou_thr, regardless of class.
+    """
+    bg = n_classes
+    cm = np.zeros((n_classes + 1, n_classes + 1), np.int64)
+    for (pb, ps, pl), (gb, gl) in zip(preds, gts):
+        keep = np.nonzero(ps >= score_thr)[0]
+        order = keep[np.argsort(-ps[keep], kind="stable")]
+        matched = np.zeros(len(gb), bool)
+        for i in order:
+            if len(gb):
+                ious = box_iou(pb[i:i + 1], gb)[0]
+                ious[matched] = 0
+                j = int(ious.argmax())
+                if ious[j] >= iou_thr:
+                    matched[j] = True
+                    cm[gl[j], pl[i]] += 1
+                    continue
+            cm[bg, pl[i]] += 1
+        for j in np.nonzero(~matched)[0]:
+            cm[gl[j], bg] += 1
+    return cm
