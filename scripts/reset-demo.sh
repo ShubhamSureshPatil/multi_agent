@@ -4,7 +4,7 @@ set -euo pipefail
 cd "$(git rev-parse --show-toplevel)"
 main_wt=$(pwd)
 git worktree list --porcelain | awk '/^worktree /{print $2}' | while read -r wt; do
-  [ "$wt" = "$main_wt" ] || { echo "removing worktree $wt"; git worktree remove --force "$wt"; }
+  [ "$wt" = "$main_wt" ] || { echo "removing worktree $wt"; git worktree remove -f -f "$wt"; }
 done
 git worktree prune
 git checkout -q main
