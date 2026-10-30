@@ -5,9 +5,8 @@ description: Run the detector evaluation and report mAP before/after a change. U
 
 # Run eval
 
-1. Get the baseline on the base branch without switching branches:
-   `git stash -q && python3 -m detector.eval --n 200; git stash pop -q`
-   (skip if there are no uncommitted changes — just run it once).
+1. Baseline from `main`, without touching your working tree:
+   `d=$(mktemp -d) && git archive main | tar -x -C "$d" && (cd "$d" && python3 -m detector.eval --n 200); rm -rf "$d"`
 2. Run `python3 -m detector.eval --n 200` on the current code.
 3. Report as a small table:
 

@@ -10,4 +10,4 @@ git worktree prune
 git checkout -q main
 git reset -q --hard demo-start
 git branch --format='%(refname:short)' | { grep -vE '^(main|backup/.*)$' || true; } | xargs -r git branch -D
-echo "reset to demo-start. Background sessions (if any): claude agents  → stop with: claude stop <id>"
+echo "reset to demo-start. Background sessions (if any): claude agents  → remove with: claude rm <id>"
